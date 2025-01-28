@@ -9,7 +9,7 @@ services:
     ports:
       - 8001:8000
     env_file:
-      - /.env.docker
+      - .env.docker
     stdin_open: true
     tty: true
     depends_on:
