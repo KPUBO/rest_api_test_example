@@ -1,20 +1,17 @@
-import os
-from typing import ClassVar
-
 from dotenv import load_dotenv
-from pydantic import BaseModel, AnyUrl
+from pydantic import BaseModel
 from pydantic import PostgresDsn
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class RunConfig(BaseModel):
-    host: str = '127.0.0.1'
+    host: str = 'localhost'
     port: int = 8000
+
 
 class ApiV1Prefix(BaseModel):
     prefix: str = "/api_v1"
-    users: str = '/users'
 
 
 class ApiPrefix(BaseModel):
@@ -24,6 +21,7 @@ class ApiPrefix(BaseModel):
 
 class DatabaseConfig(BaseModel):
     url: PostgresDsn
+    echo: bool
     max_overflow: int = 10
     pool_size: int = 50
 
@@ -36,9 +34,14 @@ class DatabaseConfig(BaseModel):
     }
 
 
+class ApiAuthConfig(BaseModel):
+    api_key_name: str
+    api_key: str
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=("fastapi-application/.env.template", "fastapi-application/.env"),
+        env_file=(".env.template", ".env"),
         case_sensitive=False,
         env_nested_delimiter="__",
         env_prefix="APP_CONFIG__",
@@ -47,6 +50,7 @@ class Settings(BaseSettings):
     api: ApiPrefix = ApiPrefix()
     load_dotenv()
     db: DatabaseConfig
+    auth: ApiAuthConfig
 
 
 settings = Settings()
