@@ -12,6 +12,8 @@ asyncpg = "^0.30.0"
 alembic = "^1.14.0"
 black = "^24.10.0"
 orjson = "^3.10.12"
+geoalchemy2 = "^0.17.0"
+shapely = "^2.0.6"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.10.0"
