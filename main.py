@@ -1,4 +1,5 @@
 import logging
+import platform
 from contextlib import asynccontextmanager
 
 import uvicorn
@@ -7,16 +8,18 @@ from fastapi.responses import ORJSONResponse
 
 from api import router
 from core.config import settings
-from core.models.db_helper import db_helper
+from core.models import db_helper
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # startup
     logger = logging.getLogger("uvicorn")
-    logger.info("Documentation: http://127.0.0.1:8000/docs")
+    current_os = platform.system()
+    if current_os == "Windows":
+        logger.info(f"Documentation: http://{settings.run.host}:{settings.run.port}/docs")
+    if current_os == "Linux":
+        logger.info(f"Documentation: http://{settings.run.host}:8001/docs")
     yield
-    # shutdown
     await db_helper.dispose()
 
 
