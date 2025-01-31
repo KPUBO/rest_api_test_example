@@ -1,5 +1,6 @@
 from typing import Sequence
 
+from fastapi import HTTPException
 from geoalchemy2 import WKTElement
 from geoalchemy2.functions import ST_DWithin, ST_Transform, ST_MakeEnvelope, ST_Within
 from sqlalchemy import select
@@ -16,6 +17,8 @@ async def get_all_buildings(session: AsyncSession) -> Sequence[Building]:
     buildings = res.all()
     for building in buildings:
         coords_as_wkt(building)
+    if buildings is None:
+        raise HTTPException(status_code=404, detail="Buildings not found")
     return buildings
 
 
@@ -40,6 +43,8 @@ async def get_buildings_in_radius(session: AsyncSession, latitude: float, longit
 
     result = await session.execute(stmt)
     buildings = result.scalars().all()
+    if buildings is None or len(buildings) == 0:
+        raise HTTPException(status_code=404, detail="There are no buildings in this area")
     for building in buildings:
         coords_as_wkt(building)
 
@@ -59,6 +64,8 @@ async def get_buildings_in_square(session: AsyncSession, points: list[list[float
 
     result = await session.execute(query)
     buildings = result.scalars().all()
+    if buildings is None or len(buildings) == 0:
+        raise HTTPException(status_code=404, detail="There are no buildings in this area")
     for building in buildings:
         coords_as_wkt(building)
 

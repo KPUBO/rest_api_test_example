@@ -1,5 +1,6 @@
 from typing import Sequence
 
+from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,12 +11,16 @@ from core.schemas.activity import ActivityCreate
 async def get_all_activities(session: AsyncSession) -> Sequence[Activity]:
     stmt = select(Activity).order_by(Activity.id)
     res = await session.scalars(stmt)
+    if res is None:
+        raise HTTPException(status_code=404, detail="Activities not found")
     return res.all()
 
 
 async def get_activity_by_id(session: AsyncSession, activity_id: int) -> Activity:
     stmt = select(Activity).where(Activity.id == activity_id)
     res = await session.execute(stmt)
+    if res is None:
+        raise HTTPException(status_code=404, detail="Activity not found")
     activity = res.scalars().first()
     return activity
 
