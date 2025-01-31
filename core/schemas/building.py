@@ -12,6 +12,6 @@ class BuildingCreate(BuildingBase):
     pass
 
 
-class BuildingResponse(BaseModel):
+class BuildingResponse(BuildingBase):
     id: int
     coords: Optional[str]
