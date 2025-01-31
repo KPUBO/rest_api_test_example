@@ -28,6 +28,31 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
 
+  test_db:
+    image: postgis/postgis:latest
+    ports:
+      - 6433:5432
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: test_rest_api
+    volumes:
+      - db_data_test:/var/lib/postgresql/data
+
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: /bin/bash -c "sleep 5 && pytest ./tests"
+    env_file:
+      - .env.docker
+    stdin_open: true
+    tty: true
+    depends_on:
+      - test_db
+      - adminer
+
   adminer:
     image: adminer
     restart: always
@@ -36,3 +61,4 @@ services:
 
 volumes:
   db_data:
+  db_data_test:
