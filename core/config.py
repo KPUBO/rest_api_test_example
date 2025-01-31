@@ -38,6 +38,9 @@ class ApiAuthConfig(BaseModel):
     api_key_name: str
     api_key: str
 
+class TestDBConfig(BaseModel):
+    test_database_url: PostgresDsn
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
@@ -51,6 +54,7 @@ class Settings(BaseSettings):
     load_dotenv()
     db: DatabaseConfig
     auth: ApiAuthConfig
+    test_db: TestDBConfig
 
 
 settings = Settings()
